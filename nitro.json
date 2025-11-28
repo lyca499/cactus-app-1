@@ -1,0 +1,35 @@
+{
+  "cxxNamespace": ["cactus"],
+  "ios": {
+    "iosModuleName": "Cactus"
+  },
+  "android": {
+    "androidNamespace": ["cactus"],
+    "androidCxxLibName": "cactus"
+  },
+  "autolinking": {
+    "Cactus": {
+      "cpp": "HybridCactus"
+    },
+    "CactusUtil": {
+      "cpp": "HybridCactusUtil"
+    },
+    "CactusFileSystem": {
+      "kotlin": "HybridCactusFileSystem",
+      "swift": "HybridCactusFileSystem"
+    },
+    "CactusCrypto": {
+      "kotlin": "HybridCactusCrypto",
+      "swift": "HybridCactusCrypto"
+    },
+    "CactusDeviceInfo": {
+      "kotlin": "HybridCactusDeviceInfo",
+      "swift": "HybridCactusDeviceInfo"
+    },
+    "CactusImage": {
+      "kotlin": "HybridCactusImage",
+      "swift": "HybridCactusImage"
+    }
+  },
+  "ignorePaths": ["node_modules"]
+}
