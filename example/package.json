@@ -12,10 +12,14 @@
   "dependencies": {
     "@dr.pogodin/react-native-fs": "^2.36.1",
     "@react-native-documents/picker": "^11.0.0",
+    "lucide-react": "^0.555.0",
+    "lucide-react-native": "^0.555.0",
     "react": "19.1.0",
     "react-native": "0.81.1",
+    "react-native-fs": "^2.20.0",
     "react-native-image-picker": "^8.2.1",
-    "react-native-nitro-modules": "^0.31.3"
+    "react-native-nitro-modules": "^0.31.3",
+    "react-native-permissions": "^5.4.4"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

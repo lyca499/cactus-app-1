@@ -14,6 +14,7 @@ import RAGScreen from './RAGScreen';
 import STTScreen from './STTScreen';
 import ChatScreen from './ChatScreen';
 import PerformanceScreen from './PerformanceScreen';
+import GalleryScreen from './GalleryScreen'; // Keep this import
 
 type Screen =
   | 'Home'
@@ -23,7 +24,8 @@ type Screen =
   | 'RAG'
   | 'STT'
   | 'Chat'
-  | 'Performance';
+  | 'Performance'
+  | 'Gallery'; // Add 'Gallery' to the Screen type
 
 const App = () => {
   const [selectedScreen, setSelectedScreen] = useState<Screen>('Home');
@@ -60,6 +62,10 @@ const App = () => {
     setSelectedScreen('Performance');
   };
 
+  const handleGoToGallery = () => { // New handler for GalleryScreen
+    setSelectedScreen('Gallery');
+  };
+
   const renderScreen = () => {
     switch (selectedScreen) {
       case 'Completion':
@@ -76,6 +82,8 @@ const App = () => {
         return <ChatScreen />;
       case 'Performance':
         return <PerformanceScreen />;
+      case 'Gallery': // Add case for GalleryScreen
+        return <GalleryScreen />;
       default:
         return null;
     }
@@ -158,6 +166,19 @@ const App = () => {
               Direct CactusLM class usage
             </Text>
           </TouchableOpacity>
+          
+          {/* New Gallery Button */}
+          <TouchableOpacity 
+            style={styles.menuButton} 
+            onPress={handleGoToGallery} // Use the new handler
+          >
+            <Text style={styles.menuButtonTitle}>Gallery</Text>
+            <Text style={styles.menuButtonDescription}>
+              Image generation and editing
+            </Text>
+          </TouchableOpacity>
+          {/* End New Gallery Button */}
+          
         </ScrollView>
       </View>
     </SafeAreaView>

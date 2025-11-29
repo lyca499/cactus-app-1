@@ -1,16 +1,21 @@
 const path = require('path');
-const { getDefaultConfig } = require('@react-native/metro-config');
-const { withMetroConfig } = require('react-native-monorepo-config');
+const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
 
 const root = path.resolve(__dirname, '..');
 
-/**
- * Metro configuration
- * https://facebook.github.io/metro/docs/configuration
- *
- * @type {import('metro-config').MetroConfig}
- */
-module.exports = withMetroConfig(getDefaultConfig(__dirname), {
-  root,
-  dirname: __dirname,
-});
+const config = {
+  watchFolders: [root],
+  resolver: {
+    extraNodeModules: {
+      // Force Local React
+      'react': path.resolve(__dirname, 'node_modules/react'),
+      'react-native': path.resolve(__dirname, 'node_modules/react-native'),
+      // Force Library Source
+      'cactus-react-native': path.resolve(__dirname, '../src'),
+    },
+    nodeModulesPaths: [path.resolve(__dirname, 'node_modules')],
+  },
+};
+
+const defaultConfig = getDefaultConfig(__dirname);
+module.exports = mergeConfig(defaultConfig, config);
