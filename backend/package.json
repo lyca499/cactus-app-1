@@ -1,0 +1,30 @@
+{
+  "name": "cactus-memory-backend",
+  "version": "1.0.0",
+  "description": "React Native backend using Cactus SDK directly",
+  "main": "index.js",
+  "scripts": {
+    "start": "react-native start",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios"
+  },
+  "dependencies": {
+    "react": "19.1.0",
+    "react-native": "0.81.1",
+    "cactus-react-native": "file:..",
+    "react-native-nitro-modules": "^0.31.3",
+    "@react-native/metro-config": "^0.81.1",
+    "@react-native-async-storage/async-storage": "^1.23.1",
+    "react-native-tcp-socket": "^6.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@babel/preset-env": "^7.25.3",
+    "@babel/runtime": "^7.25.0",
+    "@react-native-community/cli": "20.0.0",
+    "@react-native/babel-preset": "0.81.1",
+    "@types/react": "^19.1.0",
+    "typescript": "^5.3.3"
+  }
+}
+
