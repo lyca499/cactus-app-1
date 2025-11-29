@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@dr.pogodin/react-native-fs": "^2.36.1",
+    "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-documents/picker": "^11.0.0",
     "lucide-react": "^0.555.0",
     "lucide-react-native": "^0.555.0",
