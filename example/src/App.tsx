@@ -62,7 +62,8 @@ const App = () => {
     setSelectedScreen('Performance');
   };
 
-  const handleGoToGallery = () => { // New handler for GalleryScreen
+  const handleGoToGallery = () => {
+    // New handler for GalleryScreen
     setSelectedScreen('Gallery');
   };
 
@@ -166,10 +167,10 @@ const App = () => {
               Direct CactusLM class usage
             </Text>
           </TouchableOpacity>
-          
+
           {/* New Gallery Button */}
-          <TouchableOpacity 
-            style={styles.menuButton} 
+          <TouchableOpacity
+            style={styles.menuButton}
             onPress={handleGoToGallery} // Use the new handler
           >
             <Text style={styles.menuButtonTitle}>Gallery</Text>
@@ -178,7 +179,6 @@ const App = () => {
             </Text>
           </TouchableOpacity>
           {/* End New Gallery Button */}
-          
         </ScrollView>
       </View>
     </SafeAreaView>

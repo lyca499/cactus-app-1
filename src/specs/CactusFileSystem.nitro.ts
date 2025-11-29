@@ -1,7 +1,9 @@
 import type { HybridObject } from 'react-native-nitro-modules';
 
-export interface CactusFileSystem
-  extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
+export interface CactusFileSystem extends HybridObject<{
+  ios: 'swift';
+  android: 'kotlin';
+}> {
   // General
   getCactusDirectory(): Promise<string>;
   // File

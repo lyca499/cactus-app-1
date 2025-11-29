@@ -1,6 +1,6 @@
 /**
  * Memory Database for React Native
- * 
+ *
  * Uses AsyncStorage for persistent storage in React Native
  */
 
@@ -31,12 +31,15 @@ export class MemoryDatabase {
     }
   }
 
-  async insertMemory(data: Omit<MemoryRecord, 'id' | 'created_at'>): Promise<number> {
+  async insertMemory(
+    data: Omit<MemoryRecord, 'id' | 'created_at'>
+  ): Promise<number> {
     await this.initialize(); // Ensure initialized
-    
-    const id = this.memories.length > 0 
-      ? Math.max(...this.memories.map(m => m.id)) + 1 
-      : 1;
+
+    const id =
+      this.memories.length > 0
+        ? Math.max(...this.memories.map((m) => m.id)) + 1
+        : 1;
 
     const memory: MemoryRecord = {
       ...data,
@@ -55,14 +58,17 @@ export class MemoryDatabase {
     minSimilarity: number = 0.5
   ): Promise<Array<MemoryRecord & { similarity: number }>> {
     await this.initialize(); // Ensure initialized
-    
-    const similarities = this.memories.map(memory => {
-      const similarity = this.cosineSimilarity(queryEmbedding, memory.embedding);
+
+    const similarities = this.memories.map((memory) => {
+      const similarity = this.cosineSimilarity(
+        queryEmbedding,
+        memory.embedding
+      );
       return { ...memory, similarity };
     });
 
     return similarities
-      .filter(item => item.similarity >= minSimilarity)
+      .filter((item) => item.similarity >= minSimilarity)
       .sort((a, b) => b.similarity - a.similarity)
       .slice(0, limit);
   }
@@ -88,4 +94,3 @@ export class MemoryDatabase {
     await AsyncStorage.setItem(this.storageKey, JSON.stringify(this.memories));
   }
 }
-

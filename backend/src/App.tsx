@@ -1,11 +1,11 @@
 /**
  * React Native Backend App
- * 
+ *
  * This app runs as a backend server using Cactus SDK directly.
  * Since it's React Native, we can use:
- * 
+ *
  * import { CactusLM } from 'cactus-react-native';
- * 
+ *
  * ✅ This works because we're in React Native!
  */
 
@@ -21,14 +21,16 @@ const App = () => {
     const initialize = async () => {
       try {
         setStatus('Starting backend server...');
-        
+
         // Start the HTTP server
         const url = await startServer();
         setServerUrl(url);
         setStatus('✅ Backend server running!');
       } catch (error) {
         console.error('Failed to start server:', error);
-        setStatus(`❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        setStatus(
+          `❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`
+        );
       }
     };
 
@@ -91,4 +93,3 @@ const styles = StyleSheet.create({
 });
 
 export default App;
-

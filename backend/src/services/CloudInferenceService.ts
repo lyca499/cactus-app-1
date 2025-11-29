@@ -1,6 +1,6 @@
 /**
  * Cloud Inference Service
- * 
+ *
  * Fallback to cloud LLM when local confidence is low.
  * Uses fetch API (available in React Native).
  */
@@ -22,7 +22,10 @@ export class CloudInferenceService {
       : 'https://api.openai.com/v1';
   }
 
-  async processText(text: string, generateSummary: boolean = true): Promise<{
+  async processText(
+    text: string,
+    generateSummary: boolean = true
+  ): Promise<{
     summary: string;
     classification: string;
   }> {
@@ -54,7 +57,8 @@ export class CloudInferenceService {
         messages: [
           {
             role: 'system',
-            content: 'You are a helpful assistant that summarizes text concisely.',
+            content:
+              'You are a helpful assistant that summarizes text concisely.',
           },
           {
             role: 'user',
@@ -85,7 +89,8 @@ export class CloudInferenceService {
         messages: [
           {
             role: 'system',
-            content: 'You are a content classifier. Respond with only one word: email, message, note, calendar, code, or general.',
+            content:
+              'You are a content classifier. Respond with only one word: email, message, note, calendar, code, or general.',
           },
           {
             role: 'user',

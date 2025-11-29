@@ -1,6 +1,6 @@
 /**
  * HTTP Server for React Native Backend
- * 
+ *
  * Uses react-native-tcp-socket to create an HTTP server that can receive
  * images from the frontend's automatic photo library scanning.
  */
@@ -11,12 +11,6 @@
 interface HttpRequest {
   method: string;
   path: string;
-  headers: Record<string, string>;
-  body: string;
-}
-
-interface HttpResponse {
-  statusCode: number;
   headers: Record<string, string>;
   body: string;
 }
@@ -99,7 +93,10 @@ function getStatusText(statusCode: number): string {
 /**
  * Handle incoming HTTP request
  */
-async function handleRequest(socket: Socket, request: HttpRequest): Promise<void> {
+async function handleRequest(
+  socket: Socket,
+  request: HttpRequest
+): Promise<void> {
   try {
     const { method, path, body } = request;
 
@@ -170,9 +167,9 @@ async function handleProcessImage(socket: Socket, body: string): Promise<void> {
     // - imagePath: file path on device
     // - imageUri: URI (file:// or content://)
     // - base64Image: base64 encoded image (would need to save to temp file first)
-    
+
     let finalImagePath: string;
-    
+
     if (imagePath) {
       finalImagePath = imagePath;
     } else if (imageUri) {
@@ -183,7 +180,8 @@ async function handleProcessImage(socket: Socket, body: string): Promise<void> {
       socket.write(
         createHttpResponse(400, {
           error: 'Invalid Request',
-          message: 'Please provide imagePath or imageUri. Base64 images not yet supported.',
+          message:
+            'Please provide imagePath or imageUri. Base64 images not yet supported.',
         })
       );
       socket.end();
@@ -222,7 +220,10 @@ async function handleProcessImage(socket: Socket, body: string): Promise<void> {
 /**
  * Handle batch image processing (for automatic scanning of multiple images)
  */
-async function handleProcessImagesBatch(socket: Socket, body: string): Promise<void> {
+async function handleProcessImagesBatch(
+  socket: Socket,
+  body: string
+): Promise<void> {
   try {
     const data = JSON.parse(body);
     const { images } = data;
@@ -260,7 +261,9 @@ async function handleProcessImagesBatch(socket: Socket, body: string): Promise<v
       }
 
       try {
-        console.log(`[HTTP Server] Processing image ${i + 1}/${images.length}: ${finalImagePath}`);
+        console.log(
+          `[HTTP Server] Processing image ${i + 1}/${images.length}: ${finalImagePath}`
+        );
         const { processScreenshot } = await import('./server-simple');
         const result = await processScreenshot(finalImagePath);
         results.push({
@@ -350,9 +353,16 @@ export async function startHttpServer(port: number = 3000): Promise<string> {
       try {
         const tcpSocket = require('react-native-tcp-socket');
         // react-native-tcp-socket exports createServer directly
-        createServer = tcpSocket.createServer || tcpSocket.default?.createServer || tcpSocket;
+        createServer =
+          tcpSocket.createServer ||
+          tcpSocket.default?.createServer ||
+          tcpSocket;
       } catch (e) {
-        reject(new Error('react-native-tcp-socket not available. Please install it: npm install react-native-tcp-socket'));
+        reject(
+          new Error(
+            'react-native-tcp-socket not available. Please install it: npm install react-native-tcp-socket'
+          )
+        );
         return;
       }
 
@@ -423,4 +433,3 @@ export function stopHttpServer(): void {
 export function isHttpServerRunning(): boolean {
   return isServerRunning;
 }
-

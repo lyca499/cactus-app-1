@@ -1,6 +1,6 @@
 /**
  * Inference Router using Cactus SDK
- * 
+ *
  * Uses actual Cactus SDK (CactusLM) for inference!
  */
 
@@ -36,12 +36,15 @@ export class InferenceRouter {
     const visionMessages: Message[] = [
       {
         role: 'user',
-        content: 'Extract all text from this image. Return only the extracted text.',
+        content:
+          'Extract all text from this image. Return only the extracted text.',
         images: [imagePath],
       },
     ];
 
-    const visionResult = await this.cactusVision.complete({ messages: visionMessages });
+    const visionResult = await this.cactusVision.complete({
+      messages: visionMessages,
+    });
     const extractedText = visionResult.response.trim();
 
     // Step 2: Generate summary using Cactus SDK
@@ -56,14 +59,17 @@ export class InferenceRouter {
       },
     ];
 
-    const summaryResult = await this.cactusLM.complete({ messages: summaryMessages });
-    const summary = summaryResult.response.trim();
+    const summaryResult = await this.cactusLM.complete({
+      messages: summaryMessages,
+    });
+    let summary = summaryResult.response.trim();
 
     // Step 3: Classify content
     const classifyMessages: Message[] = [
       {
         role: 'system',
-        content: 'You are a content classifier. Respond with only one word: email, message, note, calendar, code, or general.',
+        content:
+          'You are a content classifier. Respond with only one word: email, message, note, calendar, code, or general.',
       },
       {
         role: 'user',
@@ -75,7 +81,7 @@ export class InferenceRouter {
       messages: classifyMessages,
       options: { maxTokens: 10, temperature: 0.3 },
     });
-    const classification = classifyResult.response.trim().toLowerCase();
+    let classification = classifyResult.response.trim().toLowerCase();
 
     // Step 4: Generate embedding using Cactus SDK
     const embeddingText = `${summary}\n${extractedText.substring(0, 500)}`;
@@ -83,10 +89,13 @@ export class InferenceRouter {
     const embedding = embedResult.embedding;
 
     // Step 5: Calculate confidence
-    const confidenceScore = this.calculateConfidence(extractedText, summary);
+    let confidenceScore = this.calculateConfidence(extractedText, summary);
 
     // Step 6: Calculate privacy score (how sensitive/private the data is)
-    const privacyScore = await this.calculatePrivacyScore(extractedText, classification);
+    const privacyScore = await this.calculatePrivacyScore(
+      extractedText,
+      classification
+    );
 
     // Step 7: Router decision - privacy score has higher priority
     // If privacy is high (sensitive data), always use local, regardless of confidence
@@ -114,18 +123,24 @@ export class InferenceRouter {
     if (inferenceMode === 'cloud') {
       try {
         console.log('[InferenceRouter] Enhancing results with cloud LLM...');
-        const cloudResult = await this.cloudService.processText(extractedText, true);
-        
+        const cloudResult = await this.cloudService.processText(
+          extractedText,
+          true
+        );
+
         // Override local summary and classification with cloud-enhanced versions
         summary = cloudResult.summary;
         classification = cloudResult.classification;
-        
+
         // Update confidence score (cloud inference is assumed to have high confidence)
         confidenceScore = this.cloudService.getConfidenceScore();
-        
+
         console.log('[InferenceRouter] ✅ Cloud enhancement completed');
       } catch (error) {
-        console.warn('[InferenceRouter] ⚠️  Cloud enhancement failed, using local results:', error);
+        console.warn(
+          '[InferenceRouter] ⚠️  Cloud enhancement failed, using local results:',
+          error
+        );
         // Fall back to local results if cloud fails
         inferenceMode = 'local';
         decisionReason += ' (cloud failed, using local)';
@@ -168,7 +183,8 @@ Text: ${mem.extracted_text?.substring(0, 200) || 'N/A'}
     const messages: Message[] = [
       {
         role: 'system',
-        content: 'You are a helpful assistant that answers questions based on provided context.',
+        content:
+          'You are a helpful assistant that answers questions based on provided context.',
       },
       {
         role: 'user',
@@ -182,7 +198,7 @@ Text: ${mem.extracted_text?.substring(0, 200) || 'N/A'}
 
   private calculateConfidence(extractedText: string, summary: string): number {
     let confidence = 0.0; // Start at 0.0 instead of 0.5
-    
+
     // Base confidence from text extraction quality
     if (extractedText.length === 0) {
       return 0.0; // No text extracted = no confidence
@@ -195,12 +211,12 @@ Text: ${mem.extracted_text?.substring(0, 200) || 'N/A'}
     } else {
       confidence += 0.8; // Long text = high confidence
     }
-    
+
     // Boost confidence if we have a good summary
     if (summary && summary.length > 20) {
       confidence += 0.2;
     }
-    
+
     return Math.min(Math.max(confidence, 0.0), 1.0); // Clamp between 0.0 and 1.0
   }
 
@@ -208,27 +224,51 @@ Text: ${mem.extracted_text?.substring(0, 200) || 'N/A'}
    * Calculate privacy score based on content sensitivity
    * Returns 0.0 to 1.0, where 1.0 = very private (should never use cloud)
    */
-  private async calculatePrivacyScore(extractedText: string, classification: string): Promise<number> {
+  private async calculatePrivacyScore(
+    extractedText: string,
+    classification: string
+  ): Promise<number> {
     // Privacy indicators (case-insensitive)
     const privacyKeywords = [
       // Personal identifiers
-      'password', 'passcode', 'pin', 'ssn', 'social security',
-      'credit card', 'card number', 'cvv', 'cvc',
-      'bank account', 'routing number', 'account number',
+      'password',
+      'passcode',
+      'pin',
+      'ssn',
+      'social security',
+      'credit card',
+      'card number',
+      'cvv',
+      'cvc',
+      'bank account',
+      'routing number',
+      'account number',
       // Personal information
-      'private', 'confidential', 'secret', 'personal',
-      'medical', 'health', 'diagnosis', 'prescription',
-      'financial', 'salary', 'income', 'tax',
+      'private',
+      'confidential',
+      'secret',
+      'personal',
+      'medical',
+      'health',
+      'diagnosis',
+      'prescription',
+      'financial',
+      'salary',
+      'income',
+      'tax',
       // Sensitive communications
-      'private message', 'dm', 'direct message',
-      'personal email', 'private email',
+      'private message',
+      'dm',
+      'direct message',
+      'personal email',
+      'private email',
     ];
 
     const textLower = extractedText.toLowerCase();
     let privacyScore = 0.0;
 
     // Check for privacy keywords
-    const keywordMatches = privacyKeywords.filter(keyword => 
+    const keywordMatches = privacyKeywords.filter((keyword) =>
       textLower.includes(keyword.toLowerCase())
     );
     privacyScore += keywordMatches.length * 0.15; // Each keyword adds 0.15
@@ -247,7 +287,9 @@ Text: ${mem.extracted_text?.substring(0, 200) || 'N/A'}
       /\b\d{10,}\b/, // Long numbers (could be account numbers)
     ];
 
-    const patternMatches = patterns.filter(pattern => pattern.test(extractedText));
+    const patternMatches = patterns.filter((pattern) =>
+      pattern.test(extractedText)
+    );
     privacyScore += patternMatches.length * 0.2; // Each pattern match adds 0.2
 
     // Text length factor (very short or very long might be more private)
@@ -265,7 +307,8 @@ Text: ${mem.extracted_text?.substring(0, 200) || 'N/A'}
         const privacyMessages: Message[] = [
           {
             role: 'system',
-            content: 'You are a privacy assessment assistant. Analyze the text and respond with only a number between 0.0 and 1.0, where 1.0 means very private/sensitive data that should never be sent to cloud services, and 0.0 means public/non-sensitive data. Consider: personal identifiers, financial info, medical info, private communications.',
+            content:
+              'You are a privacy assessment assistant. Analyze the text and respond with only a number between 0.0 and 1.0, where 1.0 means very private/sensitive data that should never be sent to cloud services, and 0.0 means public/non-sensitive data. Consider: personal identifiers, financial info, medical info, private communications.',
           },
           {
             role: 'user',
@@ -279,12 +322,19 @@ Text: ${mem.extracted_text?.substring(0, 200) || 'N/A'}
         });
 
         const llmPrivacyScore = parseFloat(privacyResult.response.trim());
-        if (!isNaN(llmPrivacyScore) && llmPrivacyScore >= 0 && llmPrivacyScore <= 1) {
+        if (
+          !isNaN(llmPrivacyScore) &&
+          llmPrivacyScore >= 0 &&
+          llmPrivacyScore <= 1
+        ) {
           // Use LLM assessment, but weight it with our rule-based score
-          privacyScore = (privacyScore * 0.4) + (llmPrivacyScore * 0.6);
+          privacyScore = privacyScore * 0.4 + llmPrivacyScore * 0.6;
         }
       } catch (error) {
-        console.warn('[InferenceRouter] LLM privacy assessment failed, using rule-based score:', error);
+        console.warn(
+          '[InferenceRouter] LLM privacy assessment failed, using rule-based score:',
+          error
+        );
         // Fall back to rule-based score
       }
     }
@@ -292,4 +342,3 @@ Text: ${mem.extracted_text?.substring(0, 200) || 'N/A'}
     return Math.min(Math.max(privacyScore, 0.0), 1.0); // Clamp between 0.0 and 1.0
   }
 }
-
